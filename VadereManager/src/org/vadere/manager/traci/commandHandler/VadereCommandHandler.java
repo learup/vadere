@@ -164,6 +164,19 @@ public class VadereCommandHandler extends CommandHandler<VadereVar> {
 		return cmd;
 	}
 
+	@VadereHandler(cmd = TraCICmd.SET_VADERE_STATE, var = VadereVar.XXXX, dataTypeStr = "String", name
+			= "applyControl", ignoreElementId = false)
+	public TraCICommand process_applyControl(TraCISetCommand cmd, RemoteManager remoteManager) {
+		String json = (String) cmd.getVariableValue();
+		Integer id = Integer.parseInt(cmd.getElementIdentifier());
+
+		remoteManager.accessState((manager, state) -> {
+			// todo handle json (Table 2)
+			cmd.setOK();
+		});
+		return cmd;
+	}
+
 	public TraCICommand processValueSub(TraCICommand rawCmd, RemoteManager remoteManager) {
 		return processValueSub(rawCmd, remoteManager, this::processGet,
 				TraCICmd.GET_VADERE_VALUE, TraCICmd.RESPONSE_SUB_VADERE_VALUE);
