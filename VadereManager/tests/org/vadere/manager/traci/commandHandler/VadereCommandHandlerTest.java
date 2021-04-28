@@ -165,4 +165,33 @@ public class VadereCommandHandlerTest extends CommandHandlerTest {
 		testSetValue(ret, varID, varType, elementID, data);
 	}
 
+
+	@Test
+	public void process_applyControl() {
+		VadereVar var = VadereVar.ADD_STIMULUS_INFOS;
+		int varID = var.id;
+		TraCIDataType varType = var.type;
+		String elementID = "-1";
+		String dataPath = "testResources/stimulusInfoData.json";
+		String data = "";
+		try {
+			data = IOUtils.readTextFile(dataPath);
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		TraCISetCommand cmd = (TraCISetCommand) getFirstCommand(TraCISetCommand.build(
+				TraCICmd.SET_VADERE_STATE, elementID, varID, varType, data));
+		RemoteManager rm = new TestRemoteManager() {
+			@Override
+			protected void mockIt() {
+				RemoteScenarioRun rsr = mock(RemoteScenarioRun.class, Mockito.RETURNS_DEEP_STUBS);
+				when(remoteManager.getRemoteSimulationRun()).thenReturn(rsr);
+				doNothing().when(rsr).addStimulusInfo(isA(StimulusInfo.class));
+			}
+		};
+		TraCICommand ret = vaCmdHandler.process_addStimulusInfos(cmd, rm);
+		checkSET_OK(ret);
+		testSetValue(ret, varID, varType, elementID, data);
+	}
+
 }

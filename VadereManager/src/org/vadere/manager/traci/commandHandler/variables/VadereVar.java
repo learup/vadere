@@ -8,6 +8,7 @@ public enum VadereVar {
 	REMOVE_TARGET_CHANGER(0x01, TraCIDataType.NULL),
 	ADD_STIMULUS_INFOS(0x02, TraCIDataType.STRING),
 	GET_ALL_STIMULUS_INFOS(0x03, TraCIDataType.STRING),
+	APPLY_CONTROL(0x04, TraCIDataType.STRING)
 	;
 
 	public int id;
