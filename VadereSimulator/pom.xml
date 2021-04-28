@@ -135,5 +135,11 @@
           <artifactId>meshing</artifactId>
           <version>${project.version}</version>
       </dependency>
+      <dependency>
+          <groupId>org.jfree</groupId>
+          <artifactId>jfreechart</artifactId>
+          <version>1.5.0</version>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 </project>

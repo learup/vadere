@@ -164,8 +164,7 @@ public class VadereCommandHandler extends CommandHandler<VadereVar> {
 		return cmd;
 	}
 
-	@VadereHandler(cmd = TraCICmd.SET_VADERE_STATE, var = VadereVar.APPLY_CONTROL, dataTypeStr = "String", name
-			= "applyControl", ignoreElementId = false)
+	@VadereHandler(cmd = TraCICmd.SET_VADERE_STATE, var = VadereVar.APPLY_CONTROL, name = "applyControl", ignoreElementId = false)
 	public TraCICommand process_applyControl(TraCISetCommand cmd, RemoteManager remoteManager) {
 		String json = (String) cmd.getVariableValue();
 
@@ -205,6 +204,8 @@ public class VadereCommandHandler extends CommandHandler<VadereVar> {
 				return process_removeTargetChanger(setCmd, remoteManager);
 			case ADD_STIMULUS_INFOS:
 				return process_addStimulusInfos(setCmd, remoteManager);
+			case APPLY_CONTROL:
+				return process_applyControl(setCmd, remoteManager);
 			default:
 				return process_UnknownCommand(setCmd, remoteManager);
 

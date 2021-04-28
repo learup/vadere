@@ -691,6 +691,20 @@ public class TestClient extends org.vadere.manager.client.AbstractTestClient imp
 	}
 
 	@Override
+	public void miscapi_applyControl(final String[] args) throws IOException {
+
+		if (args.length < 2) {
+			System.out.println("command needs argument element id");
+			return;
+		}
+
+		String elementIdentifier = args[1];
+		TraCIResponse res = miscapi.applyControl(elementIdentifier);
+		System.out.println(res.toString());
+
+	}
+
+	@Override
 	public void personapi_setInformation(String[] args) throws IOException {
 
 	}

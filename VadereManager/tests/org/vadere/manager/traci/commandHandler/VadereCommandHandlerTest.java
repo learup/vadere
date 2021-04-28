@@ -168,11 +168,12 @@ public class VadereCommandHandlerTest extends CommandHandlerTest {
 
 	@Test
 	public void process_applyControl() {
+
 		VadereVar var = VadereVar.ADD_STIMULUS_INFOS;
 		int varID = var.id;
 		TraCIDataType varType = var.type;
 		String elementID = "-1";
-		String dataPath = "testResources/stimulusInfoData.json";
+		String dataPath = "testResources/stimulusInfoNavigationData.json";
 		String data = "";
 		try {
 			data = IOUtils.readTextFile(dataPath);
@@ -192,6 +193,8 @@ public class VadereCommandHandlerTest extends CommandHandlerTest {
 		TraCICommand ret = vaCmdHandler.process_addStimulusInfos(cmd, rm);
 		checkSET_OK(ret);
 		testSetValue(ret, varID, varType, elementID, data);
-	}
 
+
+
+	}
 }
