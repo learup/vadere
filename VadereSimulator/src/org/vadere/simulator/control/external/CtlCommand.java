@@ -26,7 +26,7 @@ public class CtlCommand {
 
     public JSONArray getPedCommand(){
 
-        return rawCommand.getJSONArray("pedCommand");
+        return rawCommand.getJSONArray("pedCommands");
 
     }
 

@@ -19,6 +19,8 @@ public class DynamicClassInstantiator<T> {
 		return createObject(getClassFromName(className));
 	}
 
+
+
 	public T createObject(Class<? extends T> clazz)
 			throws CouldNotInstantiateException {
 

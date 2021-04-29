@@ -135,5 +135,11 @@
           <artifactId>meshing</artifactId>
           <version>${project.version}</version>
       </dependency>
+      <dependency>
+          <groupId>net.sf.squirrel-sql.thirdpary-non-maven</groupId>
+          <artifactId>openide</artifactId>
+          <version>4.0</version>
+          <scope>compile</scope>
+      </dependency>
   </dependencies>
 </project>

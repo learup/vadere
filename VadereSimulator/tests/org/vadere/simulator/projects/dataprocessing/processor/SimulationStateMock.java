@@ -2,6 +2,7 @@ package org.vadere.simulator.projects.dataprocessing.processor;
 
 import org.mockito.Mockito;
 import org.vadere.simulator.control.simulation.SimulationState;
+import org.vadere.state.scenario.Topography;
 import org.vadere.util.test.MockProvider;
 
 import static org.mockito.Mockito.mock;
@@ -17,7 +18,7 @@ public abstract class SimulationStateMock implements MockProvider<SimulationStat
 
 	protected SimulationState state;
 
-	SimulationStateMock() {
+	public SimulationStateMock() {
 		this.state = mock(SimulationState.class, Mockito.RETURNS_DEEP_STUBS);
 		mockIt();
 	}
@@ -25,6 +26,12 @@ public abstract class SimulationStateMock implements MockProvider<SimulationStat
 	SimulationStateMock(int simStep) {
 		this.state = mock(SimulationState.class, Mockito.RETURNS_DEEP_STUBS);
 		when(state.getStep()).thenReturn(simStep);
+		mockIt();
+	}
+
+	public SimulationStateMock(Topography topography) {
+		this.state = mock(SimulationState.class, Mockito.RETURNS_DEEP_STUBS);
+		when(state.getTopography()).thenReturn(topography);
 		mockIt();
 	}
 

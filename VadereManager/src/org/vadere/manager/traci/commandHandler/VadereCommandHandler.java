@@ -92,7 +92,7 @@ public class VadereCommandHandler extends CommandHandler<VadereVar> {
 	}
 
 
-	@VadereHandler(cmd = TraCICmd.SET_VADERE_STATE, var = VadereVar.EXTERNAL_CONTROL, dataTypeStr = "String", name = "createTargetChanger", ignoreElementId = true)
+	@VadereHandler(cmd = TraCICmd.SET_VADERE_STATE, var = VadereVar.EXTERNAL_CONTROL, dataTypeStr = "String", name = "externalControl", ignoreElementId = true)
 	public TraCICommand process_externalControl(TraCISetCommand cmd, RemoteManager remoteManager) {
 		String data = (String) cmd.getVariableValue();
 		AttributesTargetChanger atc;
@@ -101,11 +101,8 @@ public class VadereCommandHandler extends CommandHandler<VadereVar> {
 
 		remoteManager.accessState((manager, state) -> {
 
-			IControlModel ctlmodel = Input.getModel(new CtlCommand(jsonObject));
-			ctlmodel.update(state.getSimTimeInSec());
-
-
-
+			IControlModel ctlmodel = Input.getModel(jsonObject);
+			ctlmodel.update(state.getScenarioStore().getTopography());
 
 			cmd.setOK();
 		});
