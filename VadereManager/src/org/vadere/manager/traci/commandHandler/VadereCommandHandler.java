@@ -6,6 +6,9 @@ import org.apache.commons.collections.ListUtils;
 import org.vadere.annotation.traci.client.TraCIApi;
 import org.vadere.manager.RemoteManager;
 import org.vadere.manager.traci.TraCICmd;
+import org.vadere.simulator.control.external.CtlCommand;
+import org.vadere.simulator.control.external.IControlModel;
+import org.vadere.simulator.control.external.Input;
 import org.vadere.state.traci.TraCIDataType;
 import org.vadere.manager.traci.commandHandler.annotation.VadereHandler;
 import org.vadere.manager.traci.commandHandler.annotation.VadereHandlers;
@@ -29,6 +32,7 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import org.json.JSONObject;
 
 /**
  * Handel GET/SET/SUB {@link org.vadere.manager.traci.commands.TraCICommand}s for the Vadere API
@@ -50,6 +54,8 @@ import java.util.Random;
 )
 
 public class VadereCommandHandler extends CommandHandler<VadereVar> {
+
+
 
 	public static VadereCommandHandler instance;
 
@@ -84,6 +90,30 @@ public class VadereCommandHandler extends CommandHandler<VadereVar> {
 	public TraCIGetResponse responseERR(String err) {
 		return responseERR(err, TraCICmd.GET_VADERE_VALUE, TraCICmd.RESPONSE_GET_VADERE_VALUE);
 	}
+
+
+	@VadereHandler(cmd = TraCICmd.SET_VADERE_STATE, var = VadereVar.EXTERNAL_CONTROL, dataTypeStr = "String", name = "createTargetChanger", ignoreElementId = true)
+	public TraCICommand process_externalControl(TraCISetCommand cmd, RemoteManager remoteManager) {
+		String data = (String) cmd.getVariableValue();
+		AttributesTargetChanger atc;
+		String info = "";
+		JSONObject jsonObject = new JSONObject(info);
+
+		remoteManager.accessState((manager, state) -> {
+
+			IControlModel ctlmodel = Input.getModel(new CtlCommand(jsonObject));
+			ctlmodel.update(state.getSimTimeInSec());
+
+
+
+
+			cmd.setOK();
+		});
+
+		return cmd;
+	}
+
+
 
 	@VadereHandler(cmd = TraCICmd.SET_VADERE_STATE, var = VadereVar.ADD_TARGET_CHANGER, dataTypeStr = "String", name = "createTargetChanger", ignoreElementId = true)
 	public TraCICommand process_addTargetChanger(TraCISetCommand cmd, RemoteManager remoteManager) {
