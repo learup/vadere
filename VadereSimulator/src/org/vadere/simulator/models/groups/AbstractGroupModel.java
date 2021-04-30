@@ -4,7 +4,7 @@ import org.vadere.simulator.models.groups.cgm.CentroidGroup;
 import org.vadere.state.scenario.Pedestrian;
 import org.vadere.state.scenario.ScenarioElement;
 
-public abstract class AbstractGroupModel<T extends Group> implements GroupModel<CentroidGroup> {
+public abstract class AbstractGroupModel<T extends Group> implements GroupModel<T> {
 
 	/**
 	 * Register a Pedestrian to the specified group. The function does not check if the pedestrian

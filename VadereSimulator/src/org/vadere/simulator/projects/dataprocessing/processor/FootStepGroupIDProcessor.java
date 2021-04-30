@@ -3,6 +3,7 @@ package org.vadere.simulator.projects.dataprocessing.processor;
 import org.vadere.annotation.factories.dataprocessors.DataProcessorClass;
 import org.vadere.simulator.control.simulation.SimulationState;
 import org.vadere.simulator.models.groups.cgm.CentroidGroupModel;
+import org.vadere.simulator.models.groups.sir.SIRGroupModel;
 import org.vadere.simulator.projects.dataprocessing.datakey.EventtimePedestrianIdKey;
 import org.vadere.simulator.projects.dataprocessing.processor.util.ModelFilter;
 import org.vadere.util.logging.Logger;
@@ -24,6 +25,17 @@ public class FootStepGroupIDProcessor extends DataProcessor<EventtimePedestrianI
 				group.getMembers().forEach(ped -> {			// for each member in group
 					ped.getTrajectory().getFootSteps().forEach(fs -> {
 						this.putValue(new EventtimePedestrianIdKey(fs.getStartTime(), ped.getId()), gId);
+					});
+				});
+			});
+		});
+
+		getModel(state, SIRGroupModel.class).ifPresent(m -> { // find SIRGroupModel
+			SIRGroupModel model = (SIRGroupModel)m;
+			model.getGroupsById().forEach((gId, group) -> {	// for each group
+				group.getMembers().forEach(ped -> {			// for each member in group
+					ped.getTrajectory().getFootSteps().forEach(fs -> {
+						this.putValue(new EventtimePedestrianIdKey(Math.round(fs.getStartTime()*10.0)/10.0, ped.getId()), gId);
 					});
 				});
 			});
