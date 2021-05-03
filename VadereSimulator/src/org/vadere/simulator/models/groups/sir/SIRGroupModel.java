@@ -201,12 +201,17 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 					if (p == p_neighbor || getGroup(p_neighbor).getID() != SIRType.ID_INFECTED.ordinal()){
 						continue;
 					}
-
-					if (this.random.nextDouble() < attributesSIRG.getInfectionRate()) {
-						SIRGroup g = getGroup(p);
-						if (g.getID() == SIRType.ID_SUSCEPTIBLE.ordinal()) {
+					SIRGroup g = getGroup(p);
+					if (g.getID() == SIRType.ID_SUSCEPTIBLE.ordinal()) {
+						if (this.random.nextDouble() < attributesSIRG.getInfectionRate()) {
 							elementRemoved(p);
 							assignToGroup(p, SIRType.ID_INFECTED.ordinal());
+						}
+					}
+					else if (g.getID() == SIRType.ID_INFECTED.ordinal()) {
+						if (this.random.nextDouble() < attributesSIRG.getRecoveryRate()) {
+							elementRemoved(p);
+							assignToGroup(p, SIRType.ID_RECOVERY.ordinal());
 						}
 					}
 				}
