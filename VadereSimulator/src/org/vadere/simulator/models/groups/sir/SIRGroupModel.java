@@ -196,13 +196,16 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 
 		if (c.getElements().size() > 0) {
 			for (Pedestrian p : c.getElements()) {
+				SIRGroup g = getGroup(p);
+
 				// loop over neighbors and set infected if we are close
 				for (Pedestrian p_neighbor : linkedCellsGrid.getObjects(p.getPosition(), attributesSIRG.getInfectionMaxDistance())) {
-					if (p == p_neighbor || getGroup(p_neighbor).getID() != SIRType.ID_INFECTED.ordinal()){
-						continue;
-					}
-					SIRGroup g = getGroup(p);
+					if (p == p_neighbor) continue;
+
 					if (g.getID() == SIRType.ID_SUSCEPTIBLE.ordinal()) {
+						if (getGroup(p_neighbor).getID() != SIRType.ID_INFECTED.ordinal()){
+							continue;
+						}
 						if (this.random.nextDouble() < attributesSIRG.getInfectionRate()) {
 							elementRemoved(p);
 							assignToGroup(p, SIRType.ID_INFECTED.ordinal());
