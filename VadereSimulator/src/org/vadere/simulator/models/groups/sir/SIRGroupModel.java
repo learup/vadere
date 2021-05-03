@@ -16,6 +16,9 @@ import org.vadere.state.attributes.scenario.AttributesAgent;
 import org.vadere.state.scenario.DynamicElementContainer;
 import org.vadere.state.scenario.Pedestrian;
 import org.vadere.state.scenario.Topography;
+import org.vadere.util.geometry.LinkedCellsGrid;
+import org.vadere.util.geometry.PointPositioned;
+import org.vadere.util.geometry.shapes.VPoint;
 
 import java.util.*;
 
@@ -188,19 +191,41 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 		if (c.getElements().size() > 0) {
 			for(Pedestrian p : c.getElements()) {
 				// loop over neighbors and set infected if we are close
+				double half_dist = attributesSIRG.getInfectionMaxDistance();
+				LinkedCellsGrid<Pedestrian> grid;
+				grid=new LinkedCellsGrid<Pedestrian>(0,0,half_dist*2,half_dist*2,1);
+
 				for(Pedestrian p_neighbor : c.getElements()) {
-					if(p == p_neighbor || getGroup(p_neighbor).getID() != SIRType.ID_INFECTED.ordinal())
+					if (p == p_neighbor || getGroup(p_neighbor).getID() != SIRType.ID_INFECTED.ordinal()){
 						continue;
-					double dist = p.getPosition().distance(p_neighbor.getPosition());
-					if (dist < attributesSIRG.getInfectionMaxDistance() &&
-							this.random.nextDouble() < attributesSIRG.getInfectionRate()) {
+					}
+					grid.addObject(p_neighbor);
+				}
+				List<Pedestrian> p_list = grid.getObjects(p.getPosition(),half_dist);
+
+				for(Iterator<Pedestrian> it=p_list.iterator();it.hasNext();){
+					if (this.random.nextDouble()<attributesSIRG.getInfectionRate()){
 						SIRGroup g = getGroup(p);
 						if (g.getID() == SIRType.ID_SUSCEPTIBLE.ordinal()) {
 							elementRemoved(p);
 							assignToGroup(p, SIRType.ID_INFECTED.ordinal());
 						}
 					}
+					it.next();
+					it.remove();
 				}
+
+					/*
+					double dist = p.getPosition().distance(p_neighbor.getPosition());
+					if (dist < attributesSIRG.getInfectionMaxDistance()&&this.random.nextDouble()<attributesSIRG.getInfectionRate()) {
+						SIRGroup g = getGroup(p);
+						if (g.getID() == SIRType.ID_SUSCEPTIBLE.ordinal()) {
+							elementRemoved(p);
+							assignToGroup(p, SIRType.ID_INFECTED.ordinal());
+						}
+					}
+					 */
+
 			}
 		}
 	}
