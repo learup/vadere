@@ -35,10 +35,13 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 	private Topography topography;
 	private IPotentialFieldTarget potentialFieldTarget;
 	private int totalInfected = 0;
+	LinkedCellsGrid<Pedestrian> linkedCellsGrid;
+
 
 	public SIRGroupModel() {
 		this.groupsById = new LinkedHashMap<>();
 		this.sourceNextGroups = new HashMap<>();
+
 	}
 
 	@Override
@@ -48,6 +51,7 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 		this.topography = domain.getTopography();
 		this.random = random;
         this.totalInfected = 0;
+        this.linkedCellsGrid = topography.getSpatialMap(Pedestrian.class);
 	}
 
 	@Override
@@ -188,43 +192,27 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 		// check the positions of all pedestrians and switch groups to INFECTED (or REMOVED).
 		DynamicElementContainer<Pedestrian> c = topography.getPedestrianDynamicElements();
 
-		if (c.getElements().size() > 0) {
-			for(Pedestrian p : c.getElements()) {
-				// loop over neighbors and set infected if we are close
-				double half_dist = attributesSIRG.getInfectionMaxDistance();
-				LinkedCellsGrid<Pedestrian> grid;
-				grid=new LinkedCellsGrid<Pedestrian>(0,0,half_dist*2,half_dist*2,1);
+		this.linkedCellsGrid = topography.getSpatialMap(Pedestrian.class);
 
-				for(Pedestrian p_neighbor : c.getElements()) {
+		if (c.getElements().size() > 0) {
+			for (Pedestrian p : c.getElements()) {
+				// loop over neighbors and set infected if we are close
+				for (Pedestrian p_neighbor : linkedCellsGrid.getObjects(p.getPosition(), attributesSIRG.getInfectionMaxDistance())) {
 					if (p == p_neighbor || getGroup(p_neighbor).getID() != SIRType.ID_INFECTED.ordinal()){
 						continue;
 					}
-					grid.addObject(p_neighbor);
-				}
-				List<Pedestrian> p_list = grid.getObjects(p.getPosition(),half_dist);
 
-				for(Iterator<Pedestrian> it=p_list.iterator();it.hasNext();){
-					if (this.random.nextDouble()<attributesSIRG.getInfectionRate()){
+					if (this.random.nextDouble() < attributesSIRG.getInfectionRate()) {
 						SIRGroup g = getGroup(p);
 						if (g.getID() == SIRType.ID_SUSCEPTIBLE.ordinal()) {
 							elementRemoved(p);
 							assignToGroup(p, SIRType.ID_INFECTED.ordinal());
 						}
 					}
-					it.next();
-					it.remove();
 				}
 
-					/*
-					double dist = p.getPosition().distance(p_neighbor.getPosition());
-					if (dist < attributesSIRG.getInfectionMaxDistance()&&this.random.nextDouble()<attributesSIRG.getInfectionRate()) {
-						SIRGroup g = getGroup(p);
-						if (g.getID() == SIRType.ID_SUSCEPTIBLE.ordinal()) {
-							elementRemoved(p);
-							assignToGroup(p, SIRType.ID_INFECTED.ordinal());
-						}
-					}
-					 */
+
+
 
 			}
 		}
