@@ -6,19 +6,15 @@ import org.vadere.simulator.models.Model;
 import org.vadere.simulator.models.groups.AbstractGroupModel;
 import org.vadere.simulator.models.groups.Group;
 import org.vadere.simulator.models.groups.GroupSizeDeterminator;
-import org.vadere.simulator.models.groups.cgm.CentroidGroup;
 import org.vadere.simulator.models.potential.fields.IPotentialFieldTarget;
 import org.vadere.simulator.projects.Domain;
 import org.vadere.state.attributes.Attributes;
-import org.vadere.simulator.models.groups.sir.SIRGroup;
 import org.vadere.state.attributes.models.AttributesSIRG;
 import org.vadere.state.attributes.scenario.AttributesAgent;
 import org.vadere.state.scenario.DynamicElementContainer;
 import org.vadere.state.scenario.Pedestrian;
 import org.vadere.state.scenario.Topography;
 import org.vadere.util.geometry.LinkedCellsGrid;
-import org.vadere.util.geometry.PointPositioned;
-import org.vadere.util.geometry.shapes.VPoint;
 
 import java.util.*;
 
@@ -36,6 +32,8 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 	private IPotentialFieldTarget potentialFieldTarget;
 	private int totalInfected = 0;
 	LinkedCellsGrid<Pedestrian> linkedCellsGrid;
+	private double infectionRate;
+	private double recoveryRate;
 
 
 	public SIRGroupModel() {
@@ -52,6 +50,8 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 		this.random = random;
         this.totalInfected = 0;
         this.linkedCellsGrid = topography.getSpatialMap(Pedestrian.class);
+        this.infectionRate = 1-Math.pow(1-attributesSIRG.getInfectionRate(),attributesSIRG.getSimTimeStepLength()/0.5);
+		this.recoveryRate = 1-Math.pow(1-attributesSIRG.getRecoveryRate(),attributesSIRG.getSimTimeStepLength()/0.5);
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 	}
 
 	private int getFreeGroupId() {
-		if(this.random.nextDouble() < this.attributesSIRG.getInfectionRate()
+		if(this.random.nextDouble() < attributesSIRG.getInfectionRate()
         || this.totalInfected < this.attributesSIRG.getInfectionsAtStart()) {
 			if(!getGroupsById().containsKey(SIRType.ID_INFECTED.ordinal()))
 			{
@@ -206,13 +206,13 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 						if (getGroup(p_neighbor).getID() != SIRType.ID_INFECTED.ordinal()){
 							continue;
 						}
-						if (this.random.nextDouble() < attributesSIRG.getInfectionRate()) {
+						if (this.random.nextDouble() < this.infectionRate) {
 							elementRemoved(p);
 							assignToGroup(p, SIRType.ID_INFECTED.ordinal());
 						}
 					}
 					else if (g.getID() == SIRType.ID_INFECTED.ordinal()) {
-						if (this.random.nextDouble() < attributesSIRG.getRecoveryRate()) {
+						if (this.random.nextDouble() < this.recoveryRate) {
 							elementRemoved(p);
 							assignToGroup(p, SIRType.ID_RECOVERY.ordinal());
 						}

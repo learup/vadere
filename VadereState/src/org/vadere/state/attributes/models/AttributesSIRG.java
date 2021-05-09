@@ -13,6 +13,7 @@ public class AttributesSIRG extends Attributes {
 	private double infectionRate = 0.01;
 	private double infectionMaxDistance = 1;
 	private double recoveryRate = 0.005;
+	private double simTimeStepLength = 0.5;
 
 	public int getInfectionsAtStart() { return infectionsAtStart; }
 
@@ -28,4 +29,5 @@ public class AttributesSIRG extends Attributes {
 		return infectionMaxDistance;
 	}
 
+	public double getSimTimeStepLength() {return simTimeStepLength;};
 }
