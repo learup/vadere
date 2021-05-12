@@ -191,17 +191,20 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 	public void update(final double simTimeInSec) {
 		// check the positions of all pedestrians and switch groups to INFECTED (or REMOVED).
 		DynamicElementContainer<Pedestrian> c = topography.getPedestrianDynamicElements();
-
+		// get the up-to-date topography information of pedestrians
 		this.linkedCellsGrid = topography.getSpatialMap(Pedestrian.class);
 
 		if (c.getElements().size() > 0) {
+			//loop over all pedestrians
 			for (Pedestrian p : c.getElements()) {
 				SIRGroup g = getGroup(p);
 
-				// loop over neighbors and set infected if we are close
+				// loop over neighbors
 				for (Pedestrian p_neighbor : linkedCellsGrid.getObjects(p.getPosition(), attributesSIRG.getInfectionMaxDistance())) {
+					//skip, if neighbors is itself
 					if (p == p_neighbor) continue;
 
+					//if pedestrian belongs to susceptible group
 					if (g.getID() == SIRType.ID_SUSCEPTIBLE.ordinal()) {
 						if (getGroup(p_neighbor).getID() != SIRType.ID_INFECTED.ordinal()){
 							continue;
@@ -211,6 +214,7 @@ public class SIRGroupModel extends AbstractGroupModel<SIRGroup> {
 							assignToGroup(p, SIRType.ID_INFECTED.ordinal());
 						}
 					}
+					// if pedestrian belongs to infected group
 					else if (g.getID() == SIRType.ID_INFECTED.ordinal()) {
 						if (this.random.nextDouble() < this.recoveryRate) {
 							elementRemoved(p);
